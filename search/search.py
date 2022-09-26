@@ -92,11 +92,6 @@ def depthFirstSearch(problem: SearchProblem):
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
-def leeSearch(problem: SearchProblem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
     from util import Queue
 
     startState = problem.getStartState()
@@ -115,11 +110,8 @@ def leeSearch(problem: SearchProblem):
             successors = problem.getSuccessors(state)
 
             for successor in successors:
-                # print(successor)
                 path[successor[0]] = path[state] + [successor[1]]
-                # print(path)
                 queue.push(successor[0])
-            # print(nodes)
 
         visited.append(state)
 
