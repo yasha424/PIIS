@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -457,8 +457,17 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    distances = []
+
+    if problem.isGoalState(state):
+        return 0
+
+    foodList = foodGrid.asList()
+
+    for item in foodList:
+        distances.append(mazeDistance(position, item, problem.startingGameState))
+
+    return max(distances)
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
