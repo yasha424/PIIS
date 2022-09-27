@@ -158,9 +158,36 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
 
     return []
 
+def greedySearch(problem: SearchProblem, heuristic=nullHeuristic):
+    from util import PriorityQueue
+
+    startState = problem.getStartState()
+    priorityQueue = PriorityQueue()
+    visited = []
+    path = []
+    priorityQueue.push((startState, []), heuristic(startState, problem))
+
+    while not priorityQueue.isEmpty():
+        state, path = priorityQueue.pop()
+
+        if problem.isGoalState(state):
+            return path
+
+        if state not in visited:
+            successors = problem.getSuccessors(state)
+
+            for successor in successors:
+                cost = heuristic(successor[0], problem)
+                priorityQueue.push((successor[0], path + [successor[1]]), cost)
+
+            visited.append(state)
+
+    return []
+
 # Abbreviations
-bfs = breadthFirstSearch
-dfs = depthFirstSearch
-astar = aStarSearch
-ucs = uniformCostSearch
-lee = leeSearch
+bfs    = breadthFirstSearch
+dfs    = depthFirstSearch
+astar  = aStarSearch
+ucs    = uniformCostSearch
+lee    = leeSearch
+greedy = greedySearch
