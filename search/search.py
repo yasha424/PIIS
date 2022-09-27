@@ -94,26 +94,29 @@ def breadthFirstSearch(problem: SearchProblem):
     "*** YOUR CODE HERE ***"
     from util import Queue
 
-    startState = problem.getStartState()
     queue = Queue()
     visited = []
-    path = {startState: []}
-    queue.push(startState)
+    path = []
+    queue.push((problem.getStartState(), []))
 
     while not queue.isEmpty():
-        state = queue.pop()
+        state, path = queue.pop()
 
         if problem.isGoalState(state):
-            return path[state]
+            return path
 
         if state not in visited:
             successors = problem.getSuccessors(state)
 
             for successor in successors:
-                path[successor[0]] = path[state] + [successor[1]]
-                queue.push(successor[0])
+                queue.push((successor[0], path + [successor[1]]))
 
         visited.append(state)
+
+    return []
+
+def leeSearch(problem: SearchProblem):
+    return breadthFirstSearch(problem)
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
@@ -135,28 +138,29 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     startState = problem.getStartState()
     priorityQueue = PriorityQueue()
     visited = []
-    path = {startState: []}
-    priorityQueue.push(startState, heuristic(startState, problem))
-    # print(heuristic(startState, problem))
+    path = []
+    priorityQueue.push((startState, []), heuristic(startState, problem))
+
     while not priorityQueue.isEmpty():
-        state = priorityQueue.pop()
+        state, path = priorityQueue.pop()
 
         if problem.isGoalState(state):
-            return path[state]
+            return path
 
         if state not in visited:
             successors = problem.getSuccessors(state)
 
             for successor in successors:
-                path[successor[0]] = path[state] + [successor[1]]
-                cost = problem.getCostOfActions(path[successor[0]]) + heuristic(successor[0], problem)
-                priorityQueue.push(successor[0], cost)
+                cost = problem.getCostOfActions(path + [successor[1]]) + heuristic(successor[0], problem)
+                priorityQueue.push((successor[0], path + [successor[1]]), cost)
 
-        visited.append(state)
+            visited.append(state)
 
+    return []
 
 # Abbreviations
 bfs = breadthFirstSearch
 dfs = depthFirstSearch
 astar = aStarSearch
 ucs = uniformCostSearch
+lee = leeSearch
