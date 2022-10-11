@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -111,6 +111,42 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
     Your minimax agent (question 2)
     """
+    def minimax(self, gameState, agentIndex, depth):
+        if gameState.isWin() or gameState.isLose() or depth == 0:
+            return (self.evaluationFunction(gameState), Directions.STOP)
+
+        if agentIndex == gameState.getNumAgents() - 1:
+            depth -= 1
+
+        agentIndex %= gameState.getNumAgents()
+
+        if agentIndex == 0:
+            score = -float("inf")
+            bestAction = Directions.STOP
+            legalActions = gameState.getLegalActions(agentIndex)
+            for action in legalActions:
+                newGameState = gameState.generateSuccessor(agentIndex, action)
+                newScore = self.minimax(newGameState, agentIndex + 1, depth)[0]
+
+                if newScore > score:
+                    score = newScore
+                    bestAction = action
+
+            return (score, bestAction)
+
+        else:
+            score = float("inf")
+            bestAction = Directions.STOP
+            legalActions = gameState.getLegalActions(agentIndex)
+            for action in legalActions:
+                newGameState = gameState.generateSuccessor(agentIndex, action)
+                newScore = self.minimax(newGameState, agentIndex + 1, depth)[0]
+
+                if newScore < score:
+                    score = newScore
+                    bestAction = action
+
+            return (score, bestAction)
 
     def getAction(self, gameState: GameState):
         """
@@ -136,7 +172,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.minimax(gameState, 0, self.depth)[1]
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
