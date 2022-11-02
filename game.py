@@ -18,17 +18,8 @@ class Game:
 
     def makeAiMove(self):
 
-        if self.__method == "negamax":
-            move = self.__engine.getBestMove(self.__board, depth=self.__engineDepth)
-            self.makeMove(move)
-        elif self.__method == "negascout":
-            alpha = chess.engine.Cp(-999999)
-            beta = chess.engine.Cp(999999)
-            # alpha = -float("inf")
-            # beta = float("inf")
-            move = self.__engine.getBestMove(self.__board, self.__engineDepth)
-            print(move)
-            self.makeMove(move)
+        move = self.__engine.getBestMove(self.__board, depth=self.__engineDepth)
+        self.makeMove(move)
 
 
     def start(self):
