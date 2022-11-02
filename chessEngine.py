@@ -1,6 +1,6 @@
 import chess
 import chess.engine
-
+from util import Util
 
 class ChessEngine:
     def __init__(self, method="negamax", color=chess.BLACK):
@@ -17,12 +17,31 @@ class ChessEngine:
 
     def evaluate(self, board, depthLimit=1):
 
-        result = self.engine.analyse(board, chess.engine.Limit(depth=depthLimit))
+        # result = self.engine.analyse(board, chess.engine.Limit(depth=depthLimit))
+        #
+        # if self.color:
+        #     return result["score"].white()
+        #
+        # return result["score"].black()
+
+        if board.is_checkmate():
+            if self.color == board.turn:
+                return chess.engine.Cp(-999999)
+
+            return chess.engine.Cp(999999)
+
+        score = 0
+        for i in range(64):
+            piece = board.piece_type_at(chess.SQUARES[i])
+            color = board.color_at(chess.SQUARES[i])
+
+            if piece is not None and piece is not chess.KING:
+                score += Util.pieces[piece] * Util.colors[color]
 
         if self.color:
-            return result["score"].white()
+            return chess.engine.Cp(score)
 
-        return result["score"].black()
+        return chess.engine.Cp(-score)
 
     def negaMax(self, board, depth=1):
 
