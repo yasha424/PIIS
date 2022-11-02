@@ -1,13 +1,16 @@
 import chess
+import chess.engine
 from chessEngine import ChessEngine
 
+
 class Game:
-    def __init__(self, board=chess.Board(), color=chess.WHITE, engineDepth=1):
+    def __init__(self, board=chess.Board(), color=chess.WHITE, engineDepth=1, method="negamax"):
 
         self.__board = board
         self.__playerColor = color
-        self.__engine = ChessEngine(color=not color)
+        self.__engine = ChessEngine(method=method, color=not color)
         self.__engineDepth = engineDepth
+        self.__method = method
 
     def makeMove(self, move):
 
@@ -15,9 +18,18 @@ class Game:
 
     def makeAiMove(self):
 
-        move = self.__engine.getBestMove(self.__board, self.__engineDepth)
-        print(move)
-        self.makeMove(move)
+        if self.__method == "negamax":
+            move = self.__engine.getBestMove(self.__board, depth=self.__engineDepth)
+            self.makeMove(move)
+        elif self.__method == "negascout":
+            alpha = chess.engine.Cp(-999999)
+            beta = chess.engine.Cp(999999)
+            # alpha = -float("inf")
+            # beta = float("inf")
+            move = self.__engine.getBestMove(self.__board, self.__engineDepth)
+            print(move)
+            self.makeMove(move)
+
 
     def start(self):
 
@@ -27,7 +39,7 @@ class Game:
             self.makeAiMove()
             print(self.__board)
 
-        while not self.__board.is_checkmate():
+        while not self.__board.is_game_over():
             legalMoves = self.__board.legal_moves
             print("Choose your move:")
             i = 1
@@ -40,3 +52,5 @@ class Game:
 
             self.makeAiMove()
             print(self.__board)
+
+        exit()

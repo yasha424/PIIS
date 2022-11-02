@@ -8,8 +8,10 @@ class ChessEngine:
         self.color = color
         self.engine = chess.engine.SimpleEngine.popen_uci("/usr/local/bin/stockfish")
 
-        if method == 'negamax':
+        if method == "negamax":
             self.getBestMove = self.negaMax
+        elif method == "negascout":
+            self.getBestMove = self.negaScout
 
     def evaluate(self, board, depthLimit=1):
 
@@ -36,17 +38,56 @@ class ChessEngine:
 
     def minimax(self, depth, board):
 
-        if depth == 0:
+        if depth == 0 or board.is_game_over():
             return -self.evaluate(board)
 
         bestScore = chess.engine.Cp(-999999)
-        bestMove = chess.Move.null()
         for move in board.legal_moves:
             newBoard = board.copy()
             newBoard.push(move)
             score = -self.minimax(depth - 1, newBoard)
             if score > bestScore:
                 bestScore = score
-                bestMove = move
 
         return bestScore
+
+
+    def negaScout(self, board, depth):
+        bestMove = chess.Move.null()
+        bestScore = chess.engine.Cp(-999999)
+        alpha = chess.engine.Cp(-999999)
+        beta = chess.engine.Cp(999999)
+        for move in board.legal_moves:
+            newBoard = board.copy()
+            newBoard.push(move)
+            score = -self.negaScoutUtil(newBoard, alpha, beta, depth - 1)
+
+            if score > bestScore:
+                bestScore = score
+                bestMove = move
+
+        return bestMove
+    def negaScoutUtil(self, board, alpha, beta, depth):
+
+        if depth == 0 or board.is_game_over():
+            return -self.evaluate(board)
+
+        a = alpha
+        b = beta
+        i = 0
+        for move in board.legal_moves:
+            newBoard = board.copy()
+            newBoard.push(move)
+            score = -self.negaScoutUtil(newBoard, -b, -a, depth - 1)
+
+            if score > a and score < beta and depth > 0 and i > 0:
+                a = -self.negaScoutUtil(newBoard, -beta, -score, depth - 1)
+            if score > a:
+                a = score
+
+            if a >= beta:
+                return a
+
+            b = chess.engine.Cp(a.score(mate_score=100000) + 1)
+            i += 1
+        return a
