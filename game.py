@@ -1,4 +1,3 @@
-import chess
 import chess.engine
 from chessEngine import ChessEngine
 
@@ -24,24 +23,21 @@ class Game:
 
     def start(self):
 
-        print(self.__board)
-
-        if self.__playerColor == chess.BLACK:
-            self.makeAiMove()
-            print(self.__board)
-
         while not self.__board.is_game_over():
-            legalMoves = self.__board.legal_moves
-            print("Choose your move:")
-            i = 1
-            for move in legalMoves:
-                print("\t" + str(i) + ") " + move.__str__())
-                i += 1
+            print(self.__board, "\n")
+            if self.__board.turn == self.__playerColor:
+                i = 1
+                legalMoves = self.__board.legal_moves
+                print("Choose your move:")
+                for move in legalMoves:
+                    print("\t" + str(i) + ") " + move.__str__())
+                    i += 1
 
-            self.makeMove(list(legalMoves)[int(input("Enter your move index: ")) - 1])
-            print(self.__board)
+                self.makeMove(list(legalMoves)[int(input("Enter your move index: ")) - 1])
 
-            self.makeAiMove()
-            print(self.__board)
+            elif self.__board.turn != self.__playerColor:
+                self.makeAiMove()
+                print("\tAi move:", "\n")
 
-        exit()
+        print(self.__board)
+        return

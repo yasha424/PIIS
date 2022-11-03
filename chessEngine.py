@@ -26,9 +26,9 @@ class ChessEngine:
 
         if board.is_checkmate():
             if self.color == board.turn:
-                return chess.engine.Cp(-999999)
+                return chess.engine.Mate(-1)
 
-            return chess.engine.Cp(999999)
+            return chess.engine.Mate(1)
 
         score = 0
         for i in range(64):
